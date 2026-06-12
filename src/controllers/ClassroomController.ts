@@ -31,6 +31,16 @@ export class ClassroomController {
     }
   }
 
+  static async bulkOnboard(req: Request, res: Response) {
+    try {
+      const { classCode, teacherId, students } = req.body;
+      const profiles = await ClassroomService.bulkAddStudents(classCode, teacherId, students);
+      res.status(201).json(profiles);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
   static async getAnalytics(req: Request, res: Response) {
     try {
       const analytics = await ClassroomService.getClassAnalytics(req.params.id);

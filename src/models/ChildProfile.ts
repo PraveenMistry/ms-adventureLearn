@@ -42,7 +42,8 @@ const ChildProfileSchema: Schema = new Schema({
     type: Object, 
     default: { skin: 'base-fox', hat: 'none' } 
   },
-  loginPin: { type: String, default: "0000" }
+  loginPin: { type: String, default: "0000" },
+  isStruggling: { type: Boolean, default: false }
 }, { timestamps: true });
 
 export default mongoose.model<IChildProfile>('ChildProfile', ChildProfileSchema);

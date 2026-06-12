@@ -23,18 +23,70 @@ export class ClassroomService {
     return classroom;
   }
 
+  static async bulkAddStudents(classCode: string, teacherId: string, studentsData: { name: string; age: number; avatarUrl?: string; loginPin?: string }[]) {
+    const classroom = await Classroom.findOne({ classCode }).exec();
+    if (!classroom) throw new Error('Classroom not found');
+
+    const createdProfiles = [];
+    const studentIds = [];
+
+    for (const data of studentsData) {
+      const pin = data.loginPin || Math.floor(1000 + Math.random() * 9000).toString();
+      const profile = new ChildProfile({
+        name: data.name,
+        age: data.age,
+        parentId: teacherId, // Assuming teacher manages year groups for now
+        avatarUrl: data.avatarUrl || '🦊',
+        loginPin: pin
+      });
+      const saved = await profile.save();
+      createdProfiles.push(saved);
+      studentIds.push(saved._id);
+    }
+
+    // Update classroom with all new student IDs
+    await Classroom.updateOne(
+      { _id: classroom._id },
+      { $addToSet: { students: { $each: studentIds } } }
+    );
+
+    return createdProfiles;
+  }
+
   static async getClassAnalytics(classId: string) {
     const classroom = await Classroom.findById(classId).populate('students').exec();
     if (!classroom) throw new Error('Classroom not found');
 
-    const analytics = (classroom.students as any[]).map((student: any) => ({
-      _id: student._id,
-      name: student.name,
-      totalStars: student.starCoins,
-      modulesCompleted: student.progress.length,
-      recentScore: student.progress.length > 0 ? student.progress[student.progress.length - 1].score : 0,
-      loginPin: student.loginPin
-    }));
+    const now = new Date();
+    const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+
+    const analytics = (classroom.students as any[]).map((student: any) => {
+      const recentProgress = student.progress.length > 0 ? student.progress[student.progress.length - 1] : null;
+      const lastActivity = recentProgress ? new Date(recentProgress.completedAt) : new Date(student.createdAt);
+      
+      const isInactive3Days = lastActivity < threeDaysAgo;
+      const recentScore = recentProgress ? recentProgress.score : 0;
+
+      let ragStatus: 'RED' | 'AMBER' | 'GREEN' = 'GREEN';
+      
+      if (isInactive3Days || recentScore < 50) {
+        ragStatus = 'RED';
+      } else if (recentScore < 80 || (now.getTime() - lastActivity.getTime()) > (24 * 60 * 60 * 1000)) {
+        ragStatus = 'AMBER';
+      }
+
+      return {
+        _id: student._id,
+        name: student.name,
+        totalStars: student.starCoins,
+        modulesCompleted: student.progress.length,
+        recentScore: recentScore,
+        loginPin: student.loginPin,
+        ragStatus,
+        lastActivity,
+        isStruggling: isInactive3Days || (recentScore < 50 && student.progress.length > 3)
+      };
+    });
 
     return analytics;
   }

@@ -10,6 +10,14 @@ const SHOP_ITEMS = [
   { id: 'crown', name: 'Royal Crown', emoji: '👑', cost: 500, type: 'hat' },
 ];
 
+const DAILY_CHALLENGES = [
+  { targetModule: 'Math Mountain', requiredScore: 100, bonus: 50, desc: 'Score 100 on Math Mountain!' },
+  { targetModule: 'ABC Typing', requiredScore: 50, bonus: 30, desc: 'Score 50 on ABC Typing!' },
+  { targetModule: 'Typing Quest', requiredScore: 100, bonus: 100, desc: 'Score 100 on Typing Quest!' },
+  { targetModule: 'Voice Volcano', requiredScore: 100, bonus: 80, desc: 'Score 100 on Voice Volcano!' },
+  { targetModule: 'World Facts', requiredScore: 50, bonus: 50, desc: 'Score 50 on World Facts!' },
+];
+
 export class ProfileService {
   static async create(parentId: string, data: any) {
     const newProfile = new ChildProfile({ ...data, parentId });
@@ -69,6 +77,38 @@ export class ProfileService {
     return streak;
   }
 
+  static generateDailyChallenge(profile: any) {
+    // Generate a deterministic challenge based on the date and childId
+    // This ensures they get the same challenge for the whole day without needing DB storage
+    const today = new Date().toISOString().split('T')[0];
+    const seedString = `${profile._id}-${today}`;
+    
+    // Simple hash function for seeding
+    let hash = 0;
+    for (let i = 0; i < seedString.length; i++) {
+      const char = seedString.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    const challengeIndex = Math.abs(hash) % DAILY_CHALLENGES.length;
+    const challenge = DAILY_CHALLENGES[challengeIndex];
+
+    // Check if they already completed it today
+    const progress = profile.progress || [];
+    const completedToday = progress.some((p: any) => 
+      p.moduleName.includes(challenge.targetModule) && 
+      p.score >= challenge.requiredScore &&
+      new Date(p.completedAt).toISOString().split('T')[0] === today
+    );
+
+    return {
+      ...challenge,
+      completed: completedToday,
+      date: today
+    };
+  }
+
   static attachUnlockStatus(profile: any) {
     const p = profile.toObject ? profile.toObject() : profile;
     const progress = p.progress || [];
@@ -93,10 +133,14 @@ export class ProfileService {
     // Day Streak
     p.dayStreak = this.calculateStreak(p);
 
+    // Daily Challenge
+    p.dailyChallenge = this.generateDailyChallenge(p);
+
     // Module Unlocking Logic
     p.unlockedModules = {
       'abc-typing': true,
-      'phonics': isCompleted('abc typing') || isCompleted('abc-typing'),
+      'karaoke-phonics': isCompleted('abc typing') || isCompleted('abc-typing'),
+      'phonics': isCompleted('karaoke phonics') || isCompleted('karaoke-phonics') || isCompleted('abc typing'),
       'numbers': isCompleted('typing quest') || isCompleted('voice volcano') || isCompleted('phonics quest'),
       'art': isCompleted('math mountain') || isCompleted('number world'),
       'world': progress.length >= 8
@@ -110,6 +154,9 @@ export class ProfileService {
         'fast': getBestScore('abc typing - middle') >= 50
       }
     };
+
+    // Pet Companion Logic (1 level every 5 completed lessons)
+    p.petLevel = Math.floor(progress.length / 5) + 1;
 
     // Shop Items
     p.availableItems = SHOP_ITEMS;

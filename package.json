@@ -7,10 +7,12 @@
     "node": ">=22"
   },
   "scripts": {
-    "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "lint": "eslint . --ext .ts"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -29,5 +31,11 @@
     "@types/node": "^20.12.7",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
+  },
+  "lint-staged": {
+    "*.{ts,mts,mjs}": [
+      "prettier --write",
+      "eslint --cache --fix"
+    ]
   }
 }

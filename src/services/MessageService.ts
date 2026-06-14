@@ -1,4 +1,5 @@
 import Message, { IMessage } from '../models/Message';
+import Classroom from '../models/Classroom';
 
 export class MessageService {
   static async sendMessage(data: Partial<IMessage>) {
@@ -34,7 +35,7 @@ export class MessageService {
     }).exec();
 
     const parentsMap = new Map();
-    classrooms.forEach(c => {
+    classrooms.forEach((c: any) => {
       c.students.forEach((s: any) => {
         if (s.parentId && s.parentId.role === 'PARENT') {
           parentsMap.set(s.parentId._id.toString(), s.parentId);

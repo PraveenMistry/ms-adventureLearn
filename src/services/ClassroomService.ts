@@ -53,6 +53,18 @@ export class ClassroomService {
     return createdProfiles;
   }
 
+  static async delete(classId: string) {
+    return Classroom.findByIdAndDelete(classId).exec();
+  }
+
+  static async removeStudent(classId: string, studentId: string) {
+    return Classroom.findByIdAndUpdate(
+      classId,
+      { $pull: { students: studentId } },
+      { new: true }
+    ).exec();
+  }
+
   static async getClassAnalytics(classId: string) {
     const classroom = await Classroom.findById(classId).populate('students').exec();
     if (!classroom) throw new Error('Classroom not found');

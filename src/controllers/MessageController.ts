@@ -29,4 +29,13 @@ export class MessageController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  static async getTeacherParents(req: Request, res: Response) {
+    try {
+      const parents = await MessageService.getTeacherParents(req.params.teacherId);
+      res.json(parents);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 }

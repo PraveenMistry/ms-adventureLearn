@@ -54,6 +54,7 @@ router.delete('/assessments/:id', authMiddleware, AssessmentController.delete);
 // Messages
 router.post('/messages', authMiddleware, MessageController.send);
 router.get('/messages/conversation/:user1/:user2', authMiddleware, MessageController.getConversation);
+router.get('/messages/parents/:teacherId', authMiddleware, MessageController.getTeacherParents);
 router.patch('/messages/:id/read', authMiddleware, MessageController.markRead);
 
 // Story

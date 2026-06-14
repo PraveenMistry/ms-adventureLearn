@@ -26,4 +26,22 @@ export class MessageService {
   static async markAsRead(messageId: string) {
     return Message.findByIdAndUpdate(messageId, { isRead: true }, { new: true }).exec();
   }
+
+  static async getTeacherParents(teacherId: string) {
+    const classrooms = await Classroom.find({ teacherId }).populate({
+      path: 'students',
+      populate: { path: 'parentId', select: 'email role' }
+    }).exec();
+
+    const parentsMap = new Map();
+    classrooms.forEach(c => {
+      c.students.forEach((s: any) => {
+        if (s.parentId && s.parentId.role === 'PARENT') {
+          parentsMap.set(s.parentId._id.toString(), s.parentId);
+        }
+      });
+    });
+
+    return Array.from(parentsMap.values());
+  }
 }

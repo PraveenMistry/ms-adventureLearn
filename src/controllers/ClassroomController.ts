@@ -41,6 +41,25 @@ export class ClassroomController {
     }
   }
 
+  static async delete(req: Request, res: Response) {
+    try {
+      await ClassroomService.delete(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  static async removeStudent(req: Request, res: Response) {
+    try {
+      const { id, studentId } = req.params;
+      const classroom = await ClassroomService.removeStudent(id, studentId);
+      res.json(classroom);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
   static async getAnalytics(req: Request, res: Response) {
     try {
       const analytics = await ClassroomService.getClassAnalytics(req.params.id);

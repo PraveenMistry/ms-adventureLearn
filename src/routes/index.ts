@@ -8,7 +8,9 @@ import { BadgeController } from '../controllers/BadgeController';
 import { AssignmentController } from '../controllers/AssignmentController';
 import { AssessmentController } from '../controllers/AssessmentController';
 import { MessageController } from '../controllers/MessageController';
+import { SubscriptionController } from '../controllers/SubscriptionController';
 import { authMiddleware } from '../middleware/auth';
+import { checkSubscription } from '../middleware/subscription';
 
 const router = Router();
 
@@ -16,6 +18,12 @@ const router = Router();
 router.post('/auth/register', AuthController.register);
 router.post('/auth/login', AuthController.login);
 router.post('/auth/forgot-password', AuthController.forgotPassword);
+
+// Subscriptions
+router.get('/subscriptions/plans', SubscriptionController.getPlans);
+router.post('/subscriptions/subscribe', authMiddleware, SubscriptionController.subscribe);
+router.post('/subscriptions/grant', SubscriptionController.grantAccess);
+router.get('/subscriptions/status/:userId', authMiddleware, SubscriptionController.getStatus);
 
 // Profiles
 router.post('/profiles', authMiddleware, ProfileController.create);
@@ -33,12 +41,14 @@ router.get('/progress/rewards/:childId', ProgressController.getRewards);
 router.get('/progress/:childId', ProgressController.getProgress);
 
 // Classrooms
-router.post('/classrooms', authMiddleware, ClassroomController.create);
+router.post('/classrooms', authMiddleware, checkSubscription, ClassroomController.create);
 router.get('/classrooms/teacher/:teacherId', authMiddleware, ClassroomController.findAllByTeacher);
 router.post('/classrooms/join', authMiddleware, ClassroomController.join);
 router.post('/classrooms/bulk-onboard', authMiddleware, ClassroomController.bulkOnboard);
 router.get('/classrooms/:id/analytics', authMiddleware, ClassroomController.getAnalytics);
 router.get('/classrooms/code/:code', ClassroomController.findByCode);
+router.delete('/classrooms/:id', authMiddleware, ClassroomController.delete);
+router.delete('/classrooms/:id/student/:studentId', authMiddleware, ClassroomController.removeStudent);
 
 // Assignments
 router.post('/assignments', authMiddleware, AssignmentController.create);
@@ -58,6 +68,7 @@ router.get('/messages/parents/:teacherId', authMiddleware, MessageController.get
 router.patch('/messages/:id/read', authMiddleware, MessageController.markRead);
 
 // Story
+router.post('/story/generate/teacher-preview', authMiddleware, checkSubscription, StoryController.generateTeacherPreview);
 router.post('/story/generate/:childId', authMiddleware, StoryController.generate);
 
 // Badges

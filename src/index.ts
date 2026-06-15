@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import routes from './routes';
 import { WorkerService } from './services/WorkerService';
+import { SeedService } from './services/SeedService';
 
 dotenv.config();
 
@@ -20,8 +21,11 @@ app.use('/api', routes);
 
 // Database Connection
 mongoose.connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connected to MongoDB');
+    
+    // Seed initial data
+    await SeedService.seedMembershipPlans();
     
     // Start background workers
     WorkerService.startBackgroundTasks();

@@ -11,4 +11,14 @@ export class StoryController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  static async generateTeacherPreview(req: Request, res: Response) {
+    try {
+      const { theme } = req.body;
+      const result = await StoryService.generateTeacherPreview(theme);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 }

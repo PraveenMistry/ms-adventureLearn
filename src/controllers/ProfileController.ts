@@ -4,7 +4,8 @@ import { ProfileService } from '../services/ProfileService';
 export class ProfileController {
   static async create(req: Request, res: Response) {
     try {
-      const { parentId, ...data } = req.body;
+      const parentId = (req as any).user.id;
+      const { ...data } = req.body;
       const profile = await ProfileService.create(parentId, data);
       res.status(201).json(profile);
     } catch (error: any) {
@@ -14,7 +15,8 @@ export class ProfileController {
 
   static async findAllByParent(req: Request, res: Response) {
     try {
-      const profiles = await ProfileService.findAllByParent(req.params.parentId);
+      const parentId = (req as any).user.id;
+      const profiles = await ProfileService.findAllByParent(parentId);
       res.json(profiles);
     } catch (error: any) {
       res.status(400).json({ message: error.message });

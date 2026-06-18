@@ -14,8 +14,8 @@ export class SubscriptionController {
   }
 
   static async subscribe(req: Request, res: Response) {
-    const { userId, planId, paymentId } = req.body;
     try {
+      const { userId, planId, paymentId } = req.body;
       const plan = await MembershipPlan.findById(planId);
       if (!plan) return res.status(404).json({ message: 'Plan not found' });
 
@@ -41,13 +41,8 @@ export class SubscriptionController {
   }
 
   static async grantAccess(req: Request, res: Response) {
-    const { userId, planId, adminKey } = req.body;
+    const { userId, planId } = req.body;
     
-    // Simple safety check - in production use a real admin role check
-    if (adminKey !== process.env.ADMIN_SECRET_KEY && adminKey !== 'adventure-admin-2024') {
-      return res.status(401).json({ message: 'Invalid admin key' });
-    }
-
     try {
       const plan = await MembershipPlan.findById(planId);
       if (!plan) return res.status(404).json({ message: 'Plan not found' });
@@ -75,8 +70,8 @@ export class SubscriptionController {
   }
 
   static async getStatus(req: Request, res: Response) {
-    const { userId } = req.params;
     try {
+      const userId = (req as any).user.id;
       const user = await User.findById(userId).populate({
         path: 'subscription',
         populate: { path: 'planId' }

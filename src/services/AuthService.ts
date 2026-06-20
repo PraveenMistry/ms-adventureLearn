@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import Classroom from '../models/Classroom';
+import ChildProfile from '../models/ChildProfile';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'SUPER_SECRET_KEY_123';
 
@@ -54,5 +56,31 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  static async kidLogin(classCode: string, studentId: string, loginPin: string) {
+    const classroom = await Classroom.findOne({ classCode: classCode.toUpperCase() }).exec();
+    if (!classroom) throw new Error('Classroom not found');
+
+    if (!classroom.students.includes(studentId as any)) {
+      throw new Error('Student not found in classroom');
+    }
+
+    const profile = await ChildProfile.findById(studentId).exec();
+    if (!profile) throw new Error('Student profile not found');
+    if (profile.loginPin !== loginPin) {
+      throw new Error('Invalid Secret PIN');
+    }
+
+    const token = jwt.sign(
+      { id: profile.parentId, role: 'KID', childId: profile._id },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return {
+      access_token: token,
+      profile: profile
+    };
   }
 }

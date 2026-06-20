@@ -34,4 +34,14 @@ export class AuthController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  static async kidLogin(req: Request, res: Response) {
+    try {
+      const { classCode, studentId, loginPin } = req.body;
+      const result = await AuthService.kidLogin(classCode, studentId, loginPin);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 }

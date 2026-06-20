@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { WorldFactController } from '../controllers/WorldFactController';
 import { AuthController } from '../controllers/AuthController';
 import { ProfileController } from '../controllers/ProfileController';
 import { ProgressController } from '../controllers/ProgressController';
@@ -19,6 +20,7 @@ const router = Router();
 router.post('/auth/register', AuthController.register);
 router.post('/auth/login', AuthController.login);
 router.post('/auth/forgot-password', AuthController.forgotPassword);
+router.post('/auth/kid-login', AuthController.kidLogin);
 
 // Subscriptions
 router.get('/subscriptions/plans', SubscriptionController.getPlans);
@@ -76,5 +78,10 @@ router.post('/story/generate/:childId', authMiddleware, StoryController.generate
 router.post('/badges', authMiddleware, BadgeController.create);
 router.get('/badges', BadgeController.findAll);
 router.delete('/badges/:id', authMiddleware, BadgeController.delete);
+
+// World Facts
+router.get('/world-facts', WorldFactController.getAll);
+router.post('/world-facts', authMiddleware, WorldFactController.create);
+router.delete('/world-facts/:id', authMiddleware, WorldFactController.delete);
 
 export default router;

@@ -26,6 +26,7 @@ mongoose.connect(MONGO_URI)
     
     // Seed initial data
     await SeedService.seedMembershipPlans();
+    await SeedService.seedWorldFacts();
     
     // Start background workers
     WorkerService.startBackgroundTasks();

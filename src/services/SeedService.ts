@@ -1,5 +1,8 @@
 import MembershipPlan from '../models/MembershipPlan';
 import WorldFact from '../models/WorldFact';
+import Badge from '../models/Badge';
+import User from '../models/User';
+import bcrypt from 'bcryptjs';
 
 export class SeedService {
   static async seedMembershipPlans() {
@@ -70,6 +73,56 @@ export class SeedService {
       }
     } catch (error) {
       console.error('Failed to seed world facts:', error);
+    }
+  }
+
+  static async seedBadges() {
+    try {
+      const count = await Badge.countDocuments();
+      if (count === 0) {
+        console.log('Seeding initial badges...');
+        
+        // Find or create a teacher user to own the badges
+        let teacher = await User.findOne({ role: 'TEACHER' });
+        if (!teacher) {
+          const hashedPassword = await bcrypt.hash('password123', 10);
+          teacher = new User({
+            name: 'System Teacher',
+            email: 'teacher@adventurelearn.com',
+            password: hashedPassword,
+            role: 'TEACHER',
+            isActive: true
+          });
+          await teacher.save();
+        }
+
+        const badges = [
+          // LITERACY
+          { name: 'ABC Typing', icon: '⌨️', category: 'LITERACY', description: 'Master the falling letters in ABC Typing!', teacherId: teacher._id },
+          { name: 'Hindi Typing', icon: '🐘', category: 'LITERACY', description: 'Learn and type Hindi letters in the jungle!', teacherId: teacher._id },
+          { name: 'Voice Volcano', icon: '🎤', category: 'LITERACY', description: 'Speak the words correctly to save the bubbles!', teacherId: teacher._id },
+          { name: 'Reading Coach', icon: '📖', category: 'LITERACY', description: 'Complete reading questions to become a Reading Star!', teacherId: teacher._id },
+          { name: 'Letter Tracing', icon: '✍️', category: 'LITERACY', description: 'Trace all the letters in Letter Tracing!', teacherId: teacher._id },
+          { name: 'Karaoke Phonics', icon: '🎵', category: 'LITERACY', description: 'Sing along and master phonics line-by-line!', teacherId: teacher._id },
+          { name: 'Rhyme Bug Catch', icon: '🐛', category: 'LITERACY', description: 'Catch only the bugs that rhyme with target words!', teacherId: teacher._id },
+
+          // MATH
+          { name: 'Math Mountain', icon: '🏔️', category: 'MATH', description: 'Solve arithmetic questions to climb the peak!', teacherId: teacher._id },
+          { name: 'Counting Fish', icon: '🐟', category: 'MATH', description: 'Count the swimming fish correctly in the pond!', teacherId: teacher._id },
+
+          // ADVENTURE
+          { name: 'Object Safari', icon: '🔍', category: 'ADVENTURE', description: 'Find the correct animal, bird, or vehicle!', teacherId: teacher._id },
+          { name: 'Block Builder', icon: '🧱', category: 'ADVENTURE', description: 'Stack blocks carefully to build a toy castle!', teacherId: teacher._id },
+          { name: 'World Facts', icon: '🚀', category: 'ADVENTURE', description: 'Solve trivia facts to master the planet!', teacherId: teacher._id },
+          { name: 'Memory Garden', icon: '🌸', category: 'ADVENTURE', description: 'Find matching pairs of garden creatures!', teacherId: teacher._id },
+          { name: 'Pattern Pals', icon: '🧩', category: 'ADVENTURE', description: 'Complete shape and color patterns correctly!', teacherId: teacher._id }
+        ];
+
+        await Badge.insertMany(badges);
+        console.log('Badges seeded successfully!');
+      }
+    } catch (error) {
+      console.error('Failed to seed badges:', error);
     }
   }
 }

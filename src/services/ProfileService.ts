@@ -16,6 +16,13 @@ const DAILY_CHALLENGES = [
   { targetModule: 'Typing Quest', requiredScore: 100, bonus: 100, desc: 'Score 100 on Typing Quest!' },
   { targetModule: 'Voice Volcano', requiredScore: 100, bonus: 80, desc: 'Score 100 on Voice Volcano!' },
   { targetModule: 'World Facts', requiredScore: 50, bonus: 50, desc: 'Score 50 on World Facts!' },
+  { targetModule: 'Hindi Typing', requiredScore: 50, bonus: 30, desc: 'Score 50 on Hindi Typing!' },
+  { targetModule: 'Counting Fish', requiredScore: 50, bonus: 30, desc: 'Score 50 on Counting Fish!' },
+  { targetModule: 'Rhyme Bug Catch', requiredScore: 50, bonus: 30, desc: 'Score 50 on Rhyme Bug Catch!' },
+  { targetModule: 'Object Safari', requiredScore: 50, bonus: 30, desc: 'Score 50 on Object Safari!' },
+  { targetModule: 'Block Builder', requiredScore: 50, bonus: 30, desc: 'Score 50 on Block Builder!' },
+  { targetModule: 'Memory Garden', requiredScore: 50, bonus: 30, desc: 'Score 50 on Memory Garden!' },
+  { targetModule: 'Pattern Pals', requiredScore: 50, bonus: 30, desc: 'Score 50 on Pattern Pals!' },
 ];
 
 export class ProfileService {

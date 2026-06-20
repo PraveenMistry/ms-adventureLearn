@@ -147,10 +147,17 @@ export class ProfileService {
     p.unlockedModules = {
       'abc-typing': true,
       'karaoke-phonics': isCompleted('abc typing') || isCompleted('abc-typing'),
-      'phonics': isCompleted('karaoke phonics') || isCompleted('karaoke-phonics') || isCompleted('abc typing'),
-      'numbers': isCompleted('typing quest') || isCompleted('voice volcano') || isCompleted('phonics quest'),
-      'art': isCompleted('math mountain') || isCompleted('number world'),
-      'world': progress.length >= 8
+      'hindi-typing': isCompleted('abc typing') || isCompleted('abc-typing'),
+      'phonics': isCompleted('hindi typing') || isCompleted('hindi-typing'),
+      'bug-catch': isCompleted('voice volcano') || isCompleted('phonics quest') || isCompleted('phonics'),
+      'object-id': isCompleted('rhyme bug catch') || isCompleted('bug catch') || isCompleted('bug-catch'),
+      'numbers': isCompleted('object safari') || isCompleted('object-id') || isCompleted('objectidentification') || isCompleted('object identification'),
+      'counting-fish': isCompleted('math mountain') || isCompleted('number world') || isCompleted('numbers'),
+      'art': isCompleted('counting fish') || isCompleted('counting-fish'),
+      'building-blocks': isCompleted('colour & art') || isCompleted('art studio') || isCompleted('art'),
+      'memory-match': isCompleted('block builder') || isCompleted('building blocks') || isCompleted('building-blocks'),
+      'pattern-pals': isCompleted('memory garden') || isCompleted('memory match') || isCompleted('memory-match'),
+      'world': isCompleted('pattern pals') || isCompleted('pattern-pals') || progress.length >= 8
     };
 
     // Difficulty Unlocking Logic

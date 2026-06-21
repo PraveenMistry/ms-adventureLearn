@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import ChildProfile from '../models/ChildProfile';
 import Classroom from '../models/Classroom';
+import User from '../models/User';
+import School from '../models/School';
 
 const SHOP_ITEMS = [
   { id: 'base-fox', name: 'Original Fox', emoji: '🦊', cost: 0, type: 'skin' },
@@ -58,6 +60,18 @@ export class ProfileService {
       }).exec();
       if (!classroom) {
         throw new Error('Unauthorized: student is not in your classroom');
+      }
+    } else if (user.role === 'PRINCIPAL') {
+      const school = await School.findOne({ principalId: user.id }).exec();
+      if (!school) throw new Error('School not found for principal');
+      const teachers = await User.find({ schoolId: school._id, role: 'TEACHER' }).exec();
+      const teacherIds = teachers.map(t => t._id);
+      const classroom = await Classroom.findOne({
+        teacherId: { $in: teacherIds },
+        students: new mongoose.Types.ObjectId(id)
+      }).exec();
+      if (!classroom) {
+        throw new Error('Unauthorized: student is not in your school');
       }
     } else {
       throw new Error('Unauthorized role');

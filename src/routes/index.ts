@@ -12,6 +12,9 @@ import { MessageController } from '../controllers/MessageController';
 import { SubscriptionController } from '../controllers/SubscriptionController';
 import { AttendanceController } from '../controllers/AttendanceController';
 import { FeeController } from '../controllers/FeeController';
+import { SchoolController } from '../controllers/SchoolController';
+import { SchoolEventController } from '../controllers/SchoolEventController';
+import { PortfolioController } from '../controllers/PortfolioController';
 import { authMiddleware } from '../middleware/auth';
 import { adminMiddleware } from '../middleware/adminAuth';
 import { checkSubscription } from '../middleware/subscription';
@@ -98,5 +101,23 @@ router.get('/classrooms/:classId/fees', authMiddleware, FeeController.findByClas
 router.patch('/fees/:id/status', authMiddleware, FeeController.toggleStatus);
 router.delete('/fees/:id', authMiddleware, FeeController.delete);
 router.get('/profiles/:childId/fees', authMiddleware, FeeController.findByChild);
+
+// School/Principal
+router.post('/school/teachers', authMiddleware, SchoolController.addTeacher);
+router.get('/school/teachers', authMiddleware, SchoolController.getTeachers);
+router.get('/school/stats', authMiddleware, SchoolController.getStats);
+
+// School Events
+router.post('/events', authMiddleware, SchoolEventController.create);
+router.get('/classrooms/:classId/events', authMiddleware, SchoolEventController.findByClass);
+router.get('/school/:schoolId/events', authMiddleware, SchoolEventController.findBySchool);
+router.get('/events/parent', authMiddleware, SchoolEventController.findByParent);
+router.post('/events/:eventId/rsvp', authMiddleware, SchoolEventController.submitRsvp);
+router.delete('/events/:eventId', authMiddleware, SchoolEventController.delete);
+
+// Portfolio Items
+router.post('/portfolio', authMiddleware, PortfolioController.create);
+router.get('/portfolio/child/:childId', authMiddleware, PortfolioController.getTimeline);
+router.delete('/portfolio/:itemId', authMiddleware, PortfolioController.delete);
 
 export default router;

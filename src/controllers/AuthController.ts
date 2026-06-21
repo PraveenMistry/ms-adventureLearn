@@ -4,8 +4,8 @@ import { AuthService } from '../services/AuthService';
 export class AuthController {
   static async register(req: Request, res: Response) {
     try {
-      const { email, password, role, phoneNumber } = req.body;
-      const result = await AuthService.register(email, password, role, phoneNumber);
+      const { email, password, role, phoneNumber, schoolName } = req.body;
+      const result = await AuthService.register(email, password, role, phoneNumber, schoolName);
       res.status(201).json(result);
     } catch (error: any) {
       res.status(400).json({ message: error.message });

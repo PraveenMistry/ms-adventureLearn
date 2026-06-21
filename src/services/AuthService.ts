@@ -3,18 +3,26 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import Classroom from '../models/Classroom';
 import ChildProfile from '../models/ChildProfile';
+import School from '../models/School';
 import { ProfileService } from './ProfileService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'SUPER_SECRET_KEY_123';
 
 export class AuthService {
-  static async register(email: string, password: string, role: 'PARENT' | 'TEACHER', phoneNumber?: string) {
+  static async register(email: string, password: string, role: 'PARENT' | 'TEACHER' | 'PRINCIPAL', phoneNumber?: string, schoolName?: string) {
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new Error('Email already exists');
 
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = new User({ email, passwordHash, role, phoneNumber });
     await newUser.save();
+
+    if (role === 'PRINCIPAL' && schoolName) {
+      const newSchool = new School({ name: schoolName, principalId: newUser._id });
+      await newSchool.save();
+      newUser.schoolId = newSchool._id as any;
+      await newUser.save();
+    }
 
     return this.login(newUser);
   }

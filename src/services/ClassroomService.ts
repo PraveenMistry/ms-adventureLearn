@@ -1,5 +1,7 @@
 import Classroom from '../models/Classroom';
 import ChildProfile from '../models/ChildProfile';
+import User from '../models/User';
+import School from '../models/School';
 
 export class ClassroomService {
   static async create(teacherId: string, name: string) {
@@ -8,7 +10,18 @@ export class ClassroomService {
     return newClass.save();
   }
 
-  static async findAllByTeacher(teacherId: string) {
+  static async findAllByTeacher(teacherId: string, role?: string) {
+    if (role === 'PRINCIPAL') {
+      const school = await School.findOne({ principalId: teacherId }).exec();
+      if (!school) return [];
+      const teachers = await User.find({ schoolId: school._id, role: 'TEACHER' }).exec();
+      const teacherIds = teachers.map(t => t._id);
+      return Classroom.find({ teacherId: { $in: teacherIds } }).populate({
+        path: 'students',
+        populate: { path: 'parentId', select: 'email role phoneNumber' }
+      }).exec();
+    }
+
     return Classroom.find({ teacherId }).populate({
       path: 'students',
       populate: { path: 'parentId', select: 'email role phoneNumber' }

@@ -16,7 +16,8 @@ export class ClassroomController {
   static async findAllByTeacher(req: Request, res: Response) {
     try {
       const teacherId = (req as any).user.id;
-      const classrooms = await ClassroomService.findAllByTeacher(teacherId);
+      const role = (req as any).user.role;
+      const classrooms = await ClassroomService.findAllByTeacher(teacherId, role);
       res.json(classrooms);
     } catch (error: any) {
       res.status(400).json({ message: error.message });

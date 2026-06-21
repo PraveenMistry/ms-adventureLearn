@@ -25,10 +25,21 @@ export class ProfileController {
 
   static async findOne(req: Request, res: Response) {
     try {
-      const profile = await ProfileService.findOne(req.params.id);
+      const user = (req as any).user;
+      const profile = await ProfileService.findOneSecure(req.params.id, user);
       res.json(profile);
     } catch (error: any) {
-      res.status(404).json({ message: error.message });
+      res.status(403).json({ message: error.message });
+    }
+  }
+
+  static async update(req: Request, res: Response) {
+    try {
+      const parentId = (req as any).user.id;
+      const profile = await ProfileService.update(req.params.id, parentId, req.body);
+      res.json(profile);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   }
 

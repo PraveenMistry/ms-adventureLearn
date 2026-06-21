@@ -18,6 +18,9 @@ export interface IChildProfile extends Document {
   unlockedItems: string[];
   equippedItems: { skin: string; hat: string };
   loginPin: string;
+  emergencyContact?: string;
+  allowedPickups?: string;
+  allergies?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,7 +46,10 @@ const ChildProfileSchema: Schema = new Schema({
     default: { skin: 'base-fox', hat: 'none' } 
   },
   loginPin: { type: String, default: "0000" },
-  isStruggling: { type: Boolean, default: false }
+  isStruggling: { type: Boolean, default: false },
+  emergencyContact: { type: String, default: "" },
+  allowedPickups: { type: String, default: "" },
+  allergies: { type: String, default: "" }
 }, { timestamps: true });
 
 export default mongoose.model<IChildProfile>('ChildProfile', ChildProfileSchema);

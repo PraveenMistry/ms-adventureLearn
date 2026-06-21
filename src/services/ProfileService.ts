@@ -43,6 +43,44 @@ export class ProfileService {
     return this.attachUnlockStatus(profile);
   }
 
+  static async findOneSecure(id: string, user: { id: string, role: string }) {
+    const profile = await ChildProfile.findById(id).exec();
+    if (!profile) throw new Error('Profile not found');
+
+    if (user.role === 'PARENT' || user.role === 'KID') {
+      if (profile.parentId.toString() !== user.id) {
+        throw new Error('Unauthorized access to child profile');
+      }
+    } else if (user.role === 'TEACHER') {
+      const classroom = await Classroom.findOne({
+        teacherId: user.id,
+        students: new mongoose.Types.ObjectId(id)
+      }).exec();
+      if (!classroom) {
+        throw new Error('Unauthorized: student is not in your classroom');
+      }
+    } else {
+      throw new Error('Unauthorized role');
+    }
+
+    return this.attachUnlockStatus(profile);
+  }
+
+  static async update(id: string, parentId: string, data: any) {
+    const profile = await ChildProfile.findOne({ _id: id, parentId }).exec();
+    if (!profile) throw new Error('Profile not found or unauthorized');
+
+    if (data.name !== undefined) profile.name = data.name;
+    if (data.age !== undefined) profile.age = data.age;
+    if (data.avatarUrl !== undefined) profile.avatarUrl = data.avatarUrl;
+    if (data.emergencyContact !== undefined) profile.emergencyContact = data.emergencyContact;
+    if (data.allowedPickups !== undefined) profile.allowedPickups = data.allowedPickups;
+    if (data.allergies !== undefined) profile.allergies = data.allergies;
+
+    const saved = await profile.save();
+    return this.attachUnlockStatus(saved);
+  }
+
   static calculateStreak(profile: any) {
     const progress = profile.progress || [];
     const moodLogs = profile.moodLogs || [];

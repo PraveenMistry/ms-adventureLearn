@@ -99,7 +99,10 @@ export class ClassroomService {
         loginPin: student.loginPin,
         ragStatus,
         lastActivity,
-        isStruggling: isInactive3Days || (recentScore < 50 && student.progress.length > 3)
+        isStruggling: isInactive3Days || (recentScore < 50 && student.progress.length > 3),
+        emergencyContact: student.emergencyContact || "",
+        allowedPickups: student.allowedPickups || "",
+        allergies: student.allergies || ""
       };
     });
 

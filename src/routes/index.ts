@@ -10,6 +10,8 @@ import { AssignmentController } from '../controllers/AssignmentController';
 import { AssessmentController } from '../controllers/AssessmentController';
 import { MessageController } from '../controllers/MessageController';
 import { SubscriptionController } from '../controllers/SubscriptionController';
+import { AttendanceController } from '../controllers/AttendanceController';
+import { FeeController } from '../controllers/FeeController';
 import { authMiddleware } from '../middleware/auth';
 import { adminMiddleware } from '../middleware/adminAuth';
 import { checkSubscription } from '../middleware/subscription';
@@ -33,6 +35,7 @@ router.post('/subscriptions/grant', adminMiddleware, SubscriptionController.gran
 router.post('/profiles', authMiddleware, ProfileController.create);
 router.get('/profiles/parent', authMiddleware, ProfileController.findAllByParent);
 router.get('/profiles/:id', authMiddleware, ProfileController.findOne);
+router.patch('/profiles/:id', authMiddleware, ProfileController.update);
 router.post('/profiles/:id/mood', authMiddleware, ProfileController.logMood);
 router.post('/profiles/:id/equip', authMiddleware, ProfileController.equip);
 router.post('/profiles/:id/buy', authMiddleware, ProfileController.buy);
@@ -53,6 +56,10 @@ router.get('/classrooms/:id/analytics', authMiddleware, ClassroomController.getA
 router.get('/classrooms/code/:code', ClassroomController.findByCode);
 router.delete('/classrooms/:id', authMiddleware, ClassroomController.delete);
 router.delete('/classrooms/:id/student/:studentId', authMiddleware, ClassroomController.removeStudent);
+
+// Attendance
+router.post('/classrooms/:classId/attendance', authMiddleware, AttendanceController.log);
+router.get('/classrooms/:classId/attendance', authMiddleware, AttendanceController.get);
 
 // Assignments
 router.post('/assignments', authMiddleware, AssignmentController.create);
@@ -84,5 +91,12 @@ router.delete('/badges/:id', authMiddleware, BadgeController.delete);
 router.get('/world-facts', WorldFactController.getAll);
 router.post('/world-facts', authMiddleware, WorldFactController.create);
 router.delete('/world-facts/:id', authMiddleware, WorldFactController.delete);
+
+// Fees
+router.post('/fees', authMiddleware, FeeController.create);
+router.get('/classrooms/:classId/fees', authMiddleware, FeeController.findByClass);
+router.patch('/fees/:id/status', authMiddleware, FeeController.toggleStatus);
+router.delete('/fees/:id', authMiddleware, FeeController.delete);
+router.get('/profiles/:childId/fees', authMiddleware, FeeController.findByChild);
 
 export default router;

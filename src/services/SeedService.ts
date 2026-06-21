@@ -103,6 +103,7 @@ export class SeedService {
           { name: 'Voice Volcano', icon: '🎤', category: 'LITERACY', description: 'Speak the words correctly to save the bubbles!', teacherId: teacher._id },
           { name: 'Reading Coach', icon: '📖', category: 'LITERACY', description: 'Complete reading questions to become a Reading Star!', teacherId: teacher._id },
           { name: 'Letter Tracing', icon: '✍️', category: 'LITERACY', description: 'Trace all the letters in Letter Tracing!', teacherId: teacher._id },
+          { name: 'Word Builder Blocks', icon: '📦', category: 'LITERACY', description: 'Drag letter blocks to build words!', teacherId: teacher._id },
           { name: 'Karaoke Phonics', icon: '🎵', category: 'LITERACY', description: 'Sing along and master phonics line-by-line!', teacherId: teacher._id },
           { name: 'Rhyme Bug Catch', icon: '🐛', category: 'LITERACY', description: 'Catch only the bugs that rhyme with target words!', teacherId: teacher._id },
 
@@ -115,7 +116,9 @@ export class SeedService {
           { name: 'Block Builder', icon: '🧱', category: 'ADVENTURE', description: 'Stack blocks carefully to build a toy castle!', teacherId: teacher._id },
           { name: 'World Facts', icon: '🚀', category: 'ADVENTURE', description: 'Solve trivia facts to master the planet!', teacherId: teacher._id },
           { name: 'Memory Garden', icon: '🌸', category: 'ADVENTURE', description: 'Find matching pairs of garden creatures!', teacherId: teacher._id },
-          { name: 'Pattern Pals', icon: '🧩', category: 'ADVENTURE', description: 'Complete shape and color patterns correctly!', teacherId: teacher._id }
+          { name: 'Pattern Pals', icon: '🧩', category: 'ADVENTURE', description: 'Complete shape and color patterns correctly!', teacherId: teacher._id },
+          { name: 'Colour by Sound', icon: '🎨', category: 'ADVENTURE', description: 'Tap colors when heard to paint the canvas!', teacherId: teacher._id },
+          { name: 'Spot the Difference Quest', icon: '🔍', category: 'ADVENTURE', description: 'Spot the differences between twin images!', teacherId: teacher._id }
         ];
 
         await Badge.insertMany(badges);

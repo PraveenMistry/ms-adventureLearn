@@ -146,18 +146,21 @@ export class ProfileService {
     // Module Unlocking Logic
     p.unlockedModules = {
       'abc-typing': true,
+      'word-builder': isCompleted('abc typing') || isCompleted('abc-typing'),
+      'hindi-typing': isCompleted('word builder blocks') || isCompleted('word-builder-blocks') || isCompleted('word builder') || isCompleted('abc typing') || isCompleted('abc-typing'),
       'karaoke-phonics': isCompleted('abc typing') || isCompleted('abc-typing'),
-      'hindi-typing': isCompleted('abc typing') || isCompleted('abc-typing'),
       'phonics': isCompleted('hindi typing') || isCompleted('hindi-typing'),
       'bug-catch': isCompleted('voice volcano') || isCompleted('phonics quest') || isCompleted('phonics'),
       'object-id': isCompleted('rhyme bug catch') || isCompleted('bug catch') || isCompleted('bug-catch'),
       'numbers': isCompleted('object safari') || isCompleted('object-id') || isCompleted('objectidentification') || isCompleted('object identification'),
       'counting-fish': isCompleted('math mountain') || isCompleted('number world') || isCompleted('numbers'),
       'art': isCompleted('counting fish') || isCompleted('counting-fish'),
-      'building-blocks': isCompleted('colour & art') || isCompleted('art studio') || isCompleted('art'),
+      'colour-sound': isCompleted('colour & art') || isCompleted('art studio') || isCompleted('art'),
+      'building-blocks': isCompleted('colour by sound') || isCompleted('colour-sound') || isCompleted('color-sound') || isCompleted('colour & art') || isCompleted('art'),
       'memory-match': isCompleted('block builder') || isCompleted('building blocks') || isCompleted('building-blocks'),
       'pattern-pals': isCompleted('memory garden') || isCompleted('memory match') || isCompleted('memory-match'),
-      'world': isCompleted('pattern pals') || isCompleted('pattern-pals') || progress.length >= 8
+      'spot-difference': isCompleted('pattern pals') || isCompleted('pattern-pals'),
+      'world': isCompleted('spot the difference quest') || isCompleted('spot-difference') || isCompleted('spot the difference') || isCompleted('pattern pals') || isCompleted('pattern-pals') || progress.length >= 8
     };
 
     // Difficulty Unlocking Logic

@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import Classroom from '../models/Classroom';
 import ChildProfile from '../models/ChildProfile';
+import { ProfileService } from './ProfileService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'SUPER_SECRET_KEY_123';
 
@@ -78,9 +79,11 @@ export class AuthService {
       { expiresIn: '7d' }
     );
 
+    const profileWithStatus = ProfileService.attachUnlockStatus(profile);
+
     return {
       access_token: token,
-      profile: profile
+      profile: profileWithStatus
     };
   }
 }

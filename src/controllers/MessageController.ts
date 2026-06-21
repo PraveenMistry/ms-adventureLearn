@@ -35,9 +35,15 @@ export class MessageController {
 
   static async getTeacherParents(req: Request, res: Response) {
     try {
-      const teacherId = (req as any).user.id;
-      const parents = await MessageService.getTeacherParents(teacherId);
-      res.json(parents);
+      const userId = (req as any).user.id;
+      const role = (req as any).user.role;
+      if (role === 'TEACHER') {
+        const parents = await MessageService.getTeacherParents(userId);
+        res.json(parents);
+      } else {
+        const teachers = await MessageService.getParentTeachers(userId);
+        res.json(teachers);
+      }
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }

@@ -21,6 +21,7 @@ router.post('/auth/register', AuthController.register);
 router.post('/auth/login', AuthController.login);
 router.post('/auth/forgot-password', AuthController.forgotPassword);
 router.post('/auth/kid-login', AuthController.kidLogin);
+router.patch('/auth/user/:userId/phone', authMiddleware, AuthController.updatePhoneNumber);
 
 // Subscriptions
 router.get('/subscriptions/plans', SubscriptionController.getPlans);

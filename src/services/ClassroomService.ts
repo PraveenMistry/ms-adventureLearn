@@ -9,7 +9,10 @@ export class ClassroomService {
   }
 
   static async findAllByTeacher(teacherId: string) {
-    return Classroom.find({ teacherId }).populate('students').exec();
+    return Classroom.find({ teacherId }).populate({
+      path: 'students',
+      populate: { path: 'parentId', select: 'email role phoneNumber' }
+    }).exec();
   }
 
   static async addStudentByCode(classCode: string, studentId: string) {

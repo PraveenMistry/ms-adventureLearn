@@ -86,4 +86,12 @@ export class AuthService {
       profile: profileWithStatus
     };
   }
+
+  static async updatePhoneNumber(userId: string, phoneNumber: string) {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
+    user.phoneNumber = phoneNumber;
+    await user.save();
+    return user;
+  }
 }

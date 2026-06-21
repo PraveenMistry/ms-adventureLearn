@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Message, { IMessage } from '../models/Message';
 import Classroom from '../models/Classroom';
 
@@ -44,5 +45,22 @@ export class MessageService {
     });
 
     return Array.from(parentsMap.values());
+  }
+
+  static async getParentTeachers(parentId: string) {
+    const ChildProfile = mongoose.model('ChildProfile');
+    const kids = await ChildProfile.find({ parentId }).select('_id').exec();
+    const kidIds = kids.map(k => k._id);
+
+    const classrooms = await Classroom.find({ students: { $in: kidIds } }).populate('teacherId', 'email role').exec();
+    
+    const teachersMap = new Map();
+    classrooms.forEach((c: any) => {
+      if (c.teacherId && c.teacherId.role === 'TEACHER') {
+        teachersMap.set(c.teacherId._id.toString(), c.teacherId);
+      }
+    });
+
+    return Array.from(teachersMap.values());
   }
 }

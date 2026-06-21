@@ -44,4 +44,15 @@ export class AuthController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  static async updatePhoneNumber(req: Request, res: Response) {
+    try {
+      const { userId } = req.params;
+      const { phoneNumber } = req.body;
+      const result = await AuthService.updatePhoneNumber(userId, phoneNumber);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 }

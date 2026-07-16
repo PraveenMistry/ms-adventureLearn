@@ -9,7 +9,8 @@ export class AttendanceService {
 
     const formattedRecords = records.map(r => ({
       studentId: new mongoose.Types.ObjectId(r.studentId) as any,
-      status: r.status
+      status: r.status,
+      reason: (r as any).reason || ""
     }));
 
     // Find and update if exists, or insert new
@@ -40,5 +41,34 @@ export class AttendanceService {
     }
 
     return Attendance.find(query).sort({ date: 1 }).exec();
+  }
+
+  static async getStudentAttendance(studentId: string) {
+    return Attendance.find({
+      'records.studentId': new mongoose.Types.ObjectId(studentId)
+    }).sort({ date: 1 }).exec();
+  }
+
+  static async updateStudentAttendanceReason(studentId: string, dateStr: string, reason: string) {
+    const parsedDate = new Date(dateStr);
+    parsedDate.setUTCHours(0, 0, 0, 0);
+
+    const attendance = await Attendance.findOne({
+      date: parsedDate,
+      'records.studentId': new mongoose.Types.ObjectId(studentId)
+    }).exec();
+
+    if (!attendance) {
+      throw new Error('No attendance record found for this date');
+    }
+
+    attendance.records = attendance.records.map((r: any) => {
+      if (r.studentId.toString() === studentId) {
+        r.reason = reason;
+      }
+      return r;
+    });
+
+    return attendance.save();
   }
 }

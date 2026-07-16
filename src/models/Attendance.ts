@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IAttendanceRecord {
   studentId: mongoose.Types.ObjectId;
   status: 'PRESENT' | 'ABSENT' | 'LATE';
+  reason?: string;
 }
 
 export interface IAttendance extends Document {
@@ -15,7 +16,8 @@ export interface IAttendance extends Document {
 
 const AttendanceRecordSchema = new Schema({
   studentId: { type: Schema.Types.ObjectId, ref: 'ChildProfile', required: true },
-  status: { type: String, enum: ['PRESENT', 'ABSENT', 'LATE'], default: 'PRESENT', required: true }
+  status: { type: String, enum: ['PRESENT', 'ABSENT', 'LATE'], default: 'PRESENT', required: true },
+  reason: { type: String, default: "" }
 });
 
 const AttendanceSchema: Schema = new Schema({

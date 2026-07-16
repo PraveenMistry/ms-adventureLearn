@@ -30,4 +30,28 @@ export class AttendanceController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  static async getStudent(req: Request, res: Response) {
+    try {
+      const { studentId } = req.params;
+      const attendance = await AttendanceService.getStudentAttendance(studentId);
+      res.json(attendance);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  static async updateReason(req: Request, res: Response) {
+    try {
+      const { studentId } = req.params;
+      const { date, reason } = req.body;
+      if (!studentId || !date || !reason) {
+        return res.status(400).json({ message: 'Missing studentId, date, or reason' });
+      }
+      const attendance = await AttendanceService.updateStudentAttendanceReason(studentId, date, reason);
+      res.json(attendance);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 }

@@ -15,6 +15,7 @@ import { FeeController } from '../controllers/FeeController';
 import { SchoolController } from '../controllers/SchoolController';
 import { SchoolEventController } from '../controllers/SchoolEventController';
 import { PortfolioController } from '../controllers/PortfolioController';
+import { ActivityController } from '../controllers/ActivityController';
 import { authMiddleware } from '../middleware/auth';
 import { adminMiddleware } from '../middleware/adminAuth';
 import { checkSubscription } from '../middleware/subscription';
@@ -63,6 +64,8 @@ router.delete('/classrooms/:id/student/:studentId', authMiddleware, ClassroomCon
 // Attendance
 router.post('/classrooms/:classId/attendance', authMiddleware, AttendanceController.log);
 router.get('/classrooms/:classId/attendance', authMiddleware, AttendanceController.get);
+router.get('/attendance/student/:studentId', authMiddleware, AttendanceController.getStudent);
+router.patch('/attendance/student/:studentId/reason', authMiddleware, AttendanceController.updateReason);
 
 // Assignments
 router.post('/assignments', authMiddleware, AssignmentController.create);
@@ -119,5 +122,13 @@ router.delete('/events/:eventId', authMiddleware, SchoolEventController.delete);
 router.post('/portfolio', authMiddleware, PortfolioController.create);
 router.get('/portfolio/child/:childId', authMiddleware, PortfolioController.getTimeline);
 router.delete('/portfolio/:itemId', authMiddleware, PortfolioController.delete);
+
+// Extracurricular Activities
+router.post('/activities', authMiddleware, ActivityController.create);
+router.get('/activities/child/:childId', authMiddleware, ActivityController.getByChild);
+router.post('/activities/:id/sessions', authMiddleware, ActivityController.addSession);
+router.patch('/activities/:id/skills', authMiddleware, ActivityController.updateSkills);
+router.patch('/activities/:id', authMiddleware, ActivityController.updateHeader);
+router.delete('/activities/:id', authMiddleware, ActivityController.delete);
 
 export default router;
